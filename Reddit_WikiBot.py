@@ -1,7 +1,6 @@
 ﻿import requests
 from   bs4 import BeautifulSoup
 import praw
-import webbrowser
 import time
 import traceback
 import obot
