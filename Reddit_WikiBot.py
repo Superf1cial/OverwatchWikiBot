@@ -43,7 +43,7 @@ def parse_data(keyword):
 
     playerlist = []
 
-    for key, value in player.items():
+    for key, value in player.items(): #Still trying stuff with dictionary
         temp = [key,value]
         playerlist.append(temp)
     return playerlist
@@ -72,8 +72,8 @@ def scan_reddit():
 
             {}
 
-            Please don't abuse me, I have feelings.
+            Please don't abuse me, I have feelings. #formatting of data missing
             '''.format(data[0], data[1],data[2],data[3]))
             already_done.append(c.id)
 
-scan_reddit()
+scan_reddit() #loop and errorhandling missing
