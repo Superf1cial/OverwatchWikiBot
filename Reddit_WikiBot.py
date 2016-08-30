@@ -21,9 +21,7 @@ ERROR_WAIT = 20
 
 print('Logging into Reddit')
 
-r = praw.Reddit(obot.app_us)
-r.set_oauth_app_info(obot.app_id,obot.app_secret,obot.app_uri)
-r.refresh_access_information(obot.app_refresh)
+r = obot.login()
 print('Login succesful')
 
 
