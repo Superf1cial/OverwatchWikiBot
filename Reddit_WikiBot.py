@@ -1,4 +1,4 @@
-﻿import requests
+import requests
 from   bs4 import BeautifulSoup
 import praw
 import time
@@ -21,8 +21,11 @@ ERROR_WAIT = 20
 
 print('Logging into Reddit')
 
-r = obot.login()
+r = praw.Reddit(obot.app_us)
+r.set_oauth_app_info(obot.app_id,obot.app_secret,obot.app_uri)
+r.refresh_access_information(obot.app_refresh)
 print('Login succesful')
+
 
 def parse_data(keyword):
     keyword = keyword.replace("Wiki!", "")
@@ -43,14 +46,14 @@ def parse_data(keyword):
 
     playerlist = []
 
-    for key, value in player.items(): #Still trying stuff with dictionary
+    for key, value in player.items():
         temp = [key,value]
         playerlist.append(temp)
     return playerlist
 
 def scan_reddit():
 
-    already_done = set()
+    already_done = []
     keywords= ['Wiki!Genji', 'Wiki!McCree', 'Wiki!Pharah', 'Wiki!Reaper', 'Wiki!Tracer', 'Wiki!Bastion', 'Wiki!Hanzo', 'Wiki!Junkrat',
                'Wiki!Mei', 'Wiki!Torbjörn', 'Wiki!Widowmaker', 'Wiki!D.Va', 'Wiki!Reinhardt', 'Wiki!Roadhog', 'Wiki!Winston', 'Wiki!Zarya',
                'Wiki!Ana', 'Wiki!Lucio', 'Wiki!Mercy', 'Wiki!Symettra', 'Wiki!Zenyatta']
@@ -59,21 +62,35 @@ def scan_reddit():
     for c in praw.helpers.comment_stream(r,reddit,limit=None):
         has_word = any(string in c.body for string in keywords)
         if c.id not in already_done and has_word:
+            author = c.author
             word = next(filter(lambda x: x in c.body, keywords), None)
             data = parse_data(word)
+            print('Replying to {}s comment'.format(author))
             c.reply('''
-            I'm just a bot, please hate my developer /u/Superf1cial.
+I'm just a bot, please hate my developer /u/Superf1cial.
 
-            {}
+**Abilities**
 
-            {}
+        {}
 
-            {}
+        {}
 
-            {}
+        {}
 
-            Please don't abuse me, I have feelings. #formatting of data missing
-            '''.format(data[0], data[1],data[2],data[3]))
+        {}
+
+        {}
+
+Please don't abuse me, I have feelings.
+            '''.format(data[0], data[1],data[2],data[3], data[4]))
             already_done.append(c.id)
 
-scan_reddit() #loop and errorhandling missing
+while True:
+    try:
+        scan_reddit()
+    except Exception as e:
+        traceback.print_exc()
+        print('An error occured, waiting {}'.format(ERROR_WAIT))
+        time.sleep(ERROR_WAIT)
+    print('Running again in {} seconds'.format(WAIT))
+    time.sleep(WAIT)
