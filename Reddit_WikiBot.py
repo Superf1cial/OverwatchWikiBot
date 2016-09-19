@@ -14,7 +14,7 @@ sql = sqlite3.connect('commentdata')
 cur = sql.cursor()
 cur.execute('CREATE TABLE IF NOT EXISTS oldposts(id TEXT)')
 
-SUBREDDIT = 'BotFinalTesting'
+SUBREDDIT = 'competitiveoverwatch'
 
 WAIT = 15
 
@@ -25,7 +25,10 @@ MAXPOSTS = 100
 CLEANCYCLES = 10
 
 REPLY ='''
-##This action was performed by a bot, please contact /u/Superf1cial for bugs
+This action was performed by a bot, if you have complaints or bugs please contact /u/Superf1cial
+
+Ability | Information
+---|---
 '''
 
 already_done= []
@@ -57,11 +60,11 @@ def parse_data(keyword,REPLY):
             value = div.find_parent('td').find_next('td').text.strip().encode('utf-8')
             player[name][stat] = value
     for k,v in player.items():
-        temp = "{}: {}".format(k, v)
+        temp = "**{}** | {}".format(k, v)
         temp = temp.replace("b'","").replace("{","").replace("}","").replace("'","")
         temp = temp.replace("\\xe2\\x9c\\x95","")
         Abilities.append(temp)
-        REPLY += "      {}\n".format(temp)
+        REPLY += "{}\n".format(temp)
     return REPLY
 
 def scan_reddit():
@@ -75,7 +78,6 @@ def scan_reddit():
     posts = []
     posts += list(subreddit.get_comments(limit=MAXPOSTS))
     posts.sort(key=lambda x: x.created_utc)
-    print(posts)
 
     for post in posts:
         pid = post.id
@@ -104,7 +106,7 @@ def scan_reddit():
 
         cur.execute('INSERT INTO oldposts VALUES(?)', [pid])
         sql.commit()
-        print('Replying to %s by %s' % (pid, pauthor))
+        print('Replying to {} by {}'.format(pid, pauthor))
         word = next(filter(lambda x: x in post.body, keywords), None)
         COMMENT = parse_data(word, REPLY)
         try:
