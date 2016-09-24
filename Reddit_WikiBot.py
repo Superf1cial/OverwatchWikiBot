@@ -77,7 +77,6 @@ def scan_reddit():
     subreddit = r.get_subreddit(SUBREDDIT)
     posts = []
     posts += list(subreddit.get_comments(limit=MAXPOSTS))
-    posts.sort(key=lambda x: x.created_utc)
 
     for post in posts:
         pid = post.id
@@ -94,12 +93,6 @@ def scan_reddit():
         cur.execute('SELECT * FROM oldposts WHERE ID=?', [pid])
         if cur.fetchone():
             continue
-
-        if isinstance(post, praw.objects.Comment):
-            pbody = post.body
-        else:
-            pbody = '%s %s' % (post.title, post.selftext)
-        pbody = pbody.lower()
 
         if not any(key.lower() in pbody for key in keywords):
             continue
