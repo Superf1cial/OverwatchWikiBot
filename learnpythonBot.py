@@ -12,7 +12,7 @@ sql = sqlite3.connect('commentdata')
 cur = sql.cursor()
 cur.execute('CREATE TABLE IF NOT EXISTS oldposts(id TEXT)')
 
-SUBREDDIT = 'competitiveoverwatch'
+SUBREDDIT = 'Python'
 
 WAIT = 15
 
