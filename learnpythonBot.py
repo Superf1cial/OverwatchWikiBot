@@ -1,4 +1,3 @@
-import requests
 import praw
 import time
 import traceback
